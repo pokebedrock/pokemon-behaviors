@@ -7,14 +7,32 @@ import { createGunzip } from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import tar from 'tar-stream';
 
+/** GitHub repository containing Minecraft Bedrock JSON schemas. */
 export const REPO = 'Blockception/Minecraft-bedrock-json-schemas';
+/** Git commit reference (SHA) to pin the schema version. */
 export const REF = '2cc0b9b10b48bc7937cf86845c83504e40b9458f';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+/** Root directory for caching downloaded schema files. */
 const CACHE_ROOT = path.resolve(__dirname, '../../.cache');
+/** Directory where the extracted repository is stored. */
 const REPO_DIR = path.join(CACHE_ROOT, 'repo');
+/** Prefix used in the tar archive for filtering entries. */
 const ARCHIVE_PREFIX = `${REPO.split('/')[1]}-${REF}`;
 
+/**
+ * Ensures the schema repository is downloaded and extracted, using cache when available.
+ *
+ * This function:
+ * 1. Checks for a `.ready` marker file to determine if the repo is already cached
+ * 2. If not cached, downloads the repository as a tar.gz archive from GitHub
+ * 3. Extracts the archive, filtering entries by the archive prefix
+ * 4. Creates a marker file to indicate successful extraction
+ *
+ * The repository is cached in `.cache/repo` to avoid redundant downloads.
+ *
+ * @throws {Error} If the download fails or the response is invalid
+ */
 export async function ensureRepoReady() {
   const marker = path.join(REPO_DIR, '.ready');
   try {
@@ -83,6 +101,12 @@ export async function ensureRepoReady() {
   await fs.writeFile(marker, 'ready', 'utf8');
 }
 
+/**
+ * Resolves a relative path within the cached repository to an absolute file system path.
+ *
+ * @param relativePath - Relative path from the repository root (e.g., `source/behavior/entities/format/components.json`)
+ * @returns Absolute path to the file in the cached repository directory
+ */
 export function getRepoPath(relativePath: string): string {
   return path.join(REPO_DIR, relativePath);
 }
