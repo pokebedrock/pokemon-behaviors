@@ -62,4 +62,136 @@
 - Layer runtime validation helpers (Ajv/zod) atop the generated types.
 - Extend the approach to other schema groups (blocks, items) for cross-pack consistency.
 
+---
 
+# Pokemon Behaviors – Behavior Definition System
+
+## Overview
+
+The `src/behaviors/` module is the **source of truth** for all Pokemon entity behaviors.
+It uses a data-driven approach where Pokemon movement data lives in `/src/data/` and
+a generator creates the final Bedrock entity behaviors.
+
+## Architecture
+
+### Directory Structure
+
+```
+src/
+├── data/                   # Pokemon data maps (generated/maintained)
+│   ├── index.ts            # Data exports
+│   └── movement.ts         # Movement data for all Pokemon
+├── behaviors/
+│   ├── types.ts            # Core type definitions
+│   ├── generate.ts         # Behavior generator
+│   ├── index.ts            # Barrel exports
+│   ├── templates/          # Base behavior templates
+│   │   ├── BasePokemon.ts  # Shared components
+│   │   ├── WalkingPokemon.ts
+│   │   ├── FlyingPokemon.ts
+│   │   └── SwimmingPokemon.ts
+│   └── pokemon/            # Individual overrides (only when needed)
+│       └── README.md
+└── __generated__/          # Schema-generated types
+    └── entityComponents.ts
+```
+
+### Movement Categories
+
+| Category | Description | Example Pokemon |
+|----------|-------------|-----------------|
+| `ground` | Walks only | Pikachu, Bulbasaur |
+| `aerial` | Flies primarily, can walk | Charizard, Pidgeot |
+| `aquatic` | Swims only, avoids land | Magikarp, Goldeen |
+| `amphibious` | Walks and swims | Squirtle, Gyarados |
+| `hovering` | Floats/hovers | Gastly, Magnemite |
+
+## Usage
+
+### Data Format (src/data/movement.ts)
+
+```typescript
+export const POKEMON_MOVEMENT = {
+  pikachu: {
+    movement: "ground",
+    primaryType: "electric",
+    walkSpeed: 0.3,
+    boxWidth: 0.7,
+    boxHeight: 1.3,
+  },
+  charizard: {
+    movement: "aerial",
+    primaryType: "fire",
+    secondaryType: "flying",
+    flySpeed: 1.0,
+    walkSpeed: 0.15,
+    boxWidth: 1.5,
+    boxHeight: 2.65,
+    rideable: {
+      seatPosition: [0, 2.5, 0.3],
+      rideType: "air",
+    },
+  },
+  gyarados: {
+    movement: "amphibious",
+    primaryType: "water",
+    secondaryType: "flying",
+    swimSpeed: 0.35,
+    canBreatheUnderwater: true,
+    rideable: { ... },
+  },
+};
+```
+
+### Generating Behaviors
+
+```typescript
+import { generateBehavior, generateAllBehaviors } from "./behaviors";
+
+// Generate one Pokemon
+const pikachu = generateBehavior("pikachu");
+
+// Generate all Pokemon
+const all = generateAllBehaviors();
+for (const [name, behavior] of all) {
+  writeFile(`entities/pokemon/${name}.json`, JSON.stringify(behavior));
+}
+```
+
+### Custom Pokemon Overrides
+
+For Pokemon needing complex custom behavior, create a file in `pokemon/`:
+
+```typescript
+// behaviors/pokemon/mewtwo.ts
+import type { PokemonBehaviorOutput } from "../types";
+import { FlyingPokemon } from "../templates";
+
+export default function (): PokemonBehaviorOutput {
+  const base = new FlyingPokemon({
+    typeId: "pokemon:mewtwo",
+    primaryType: "psychic",
+    flySpeed: 0.8,
+  });
+
+  const output = base.build();
+  // Add mega form component group, etc.
+  return output;
+}
+```
+
+Then register in `generate.ts`:
+```typescript
+const CUSTOM_POKEMON = {
+  mewtwo: () => require("./pokemon/mewtwo").default(),
+};
+```
+
+## Design Principles
+
+1. **Data-Driven** – Pokemon definitions are clean data, not code
+2. **Generator Pattern** – Data → Templates → Behaviors
+3. **Templates for Common Patterns** – Walking, Flying, Swimming, Hovering
+4. **Override When Needed** – Custom files only for complex behavior
+5. **Use Generated Types** – All components typed via `EntityComponents`
+6. **Early Returns** – No deep nesting in logic
