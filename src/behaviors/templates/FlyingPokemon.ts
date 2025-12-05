@@ -1,9 +1,4 @@
-/**
- * Flying (Volant) Pokemon template.
- * For Pokemon that fly as their primary movement.
- */
-
-import type { ComponentGroup, PokemonBehaviorOutput } from "../types";
+import type { ComponentGroup, PokemonBehaviorOutput } from "../../types";
 import { BasePokemon, type BasePokemonConfig } from "./BasePokemon";
 
 /** Configuration specific to volant Pokemon */

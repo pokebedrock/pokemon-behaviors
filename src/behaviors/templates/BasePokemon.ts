@@ -1,15 +1,10 @@
-/**
- * Base Pokemon template.
- * All Pokemon inherit from this - provides core components shared by every Pokemon.
- */
-
 import type {
   PokemonBehaviorOutput,
   ComponentGroup,
   PokemonType,
-} from "../types";
-import type { Hitbox } from "../../data/movement";
-import type { RideableData } from "../../data/rideables";
+  Hitbox,
+  RideableData,
+} from "../../types";
 
 /** Resolve hitbox to [width, height] tuple */
 function resolveHitbox(hitbox?: Hitbox): [number, number] {
@@ -114,7 +109,7 @@ export class BasePokemon {
     return {
       "minecraft:is_saddled": {},
       "minecraft:rideable": {
-        seat_count: 1,
+        seat_count: this.rideable.seatCount ?? 1,
         crouching_skip_interact: true,
         family_types: ["player"],
         interact_text: "action.interact.mount",

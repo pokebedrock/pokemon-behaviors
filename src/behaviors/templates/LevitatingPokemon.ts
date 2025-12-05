@@ -1,9 +1,4 @@
-/**
- * Levitating Pokemon template.
- * For Pokemon that hover/float without traditional powered flight.
- */
-
-import type { ComponentGroup } from "../types";
+import type { ComponentGroup } from "../../types";
 import { BasePokemon, type BasePokemonConfig } from "./BasePokemon";
 
 /** Configuration specific to levitating Pokemon */
@@ -52,4 +47,3 @@ export class LevitatingPokemon extends BasePokemon {
     };
   }
 }
-

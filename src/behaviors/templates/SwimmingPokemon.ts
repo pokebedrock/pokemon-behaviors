@@ -1,9 +1,4 @@
-/**
- * Swimming Pokemon template.
- * For Pokemon that swim (aquatic or semiaquatic).
- */
-
-import type { ComponentGroup, PokemonBehaviorOutput } from "../types";
+import type { ComponentGroup, PokemonBehaviorOutput } from "../../types";
 import { BasePokemon, type BasePokemonConfig } from "./BasePokemon";
 
 /** Configuration specific to swimming Pokemon */

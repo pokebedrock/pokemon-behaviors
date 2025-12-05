@@ -1,9 +1,4 @@
-/**
- * Walking (Terrestrial) Pokemon template.
- * For Pokemon that walk on ground as their primary movement.
- */
-
-import type { ComponentGroup } from "../types";
+import type { ComponentGroup } from "../../types";
 import { BasePokemon, type BasePokemonConfig } from "./BasePokemon";
 
 /** Configuration specific to terrestrial Pokemon */

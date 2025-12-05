@@ -1,43 +1,20 @@
-/**
- * Pokemon Behavior Generator
- *
- * Generates PokemonBehaviorOutput for all Pokemon by:
- * 1. Reading movement data from /src/data/movement.ts
- * 2. Reading rideable data from /src/data/rideables.ts
- * 3. Mapping each Pokemon to the appropriate template
- * 4. Appending any custom Pokemon from /behaviors/pokemon/
- *
- * NOTE: Primary/secondary types must be provided externally (from pokebedrock-beh).
- *
- * Usage:
- *   import { generateAllBehaviors, generateBehavior } from "./generate";
- *
- *   // Generate one (requires type info)
- *   const pikachu = generateBehavior("pikachu", "electric");
- *
- *   // Generate all with type map
- *   const types = { pikachu: { primary: "electric" }, ... };
- *   const all = generateAllBehaviors(types);
- */
-
-import {
-  POKEMON_MOVEMENT,
-  type PokemonMovementData,
-  type LocomotionType,
-  type TerrestrialMovement,
-  type AquaticMovement,
-  type SemiaquaticMovement,
-  type VolantMovement,
-  type LevitatingMovement,
-} from "../data/movement";
-import { RIDEABLE_POKEMON, type RideableData } from "../data/rideables";
-import {
-  WalkingPokemon,
-  FlyingPokemon,
-  SwimmingPokemon,
-  LevitatingPokemon,
-} from "./templates";
-import type { PokemonBehaviorOutput, PokemonType } from "./types";
+import { POKEMON_MOVEMENT } from "../data/movement";
+import { RIDEABLE_POKEMON } from "../data/rideables";
+import type {
+  PokemonMovementData,
+  LocomotionType,
+  TerrestrialMovement,
+  AquaticMovement,
+  SemiaquaticMovement,
+  VolantMovement,
+  LevitatingMovement,
+  RideableData,
+} from "../types";
+import type { PokemonBehaviorOutput, PokemonType } from "../types";
+import { FlyingPokemon } from "./templates/FlyingPokemon";
+import { LevitatingPokemon } from "./templates/LevitatingPokemon";
+import { SwimmingPokemon } from "./templates/SwimmingPokemon";
+import { WalkingPokemon } from "./templates/WalkingPokemon";
 
 /** Type information for a Pokemon */
 export interface PokemonTypeInfo {
